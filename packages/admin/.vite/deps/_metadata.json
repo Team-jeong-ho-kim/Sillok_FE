@@ -1,0 +1,37 @@
+{
+  "hash": "aedd63a7",
+  "configHash": "ac16f55b",
+  "lockfileHash": "e3b0c442",
+  "browserHash": "86907562",
+  "optimized": {
+    "react/jsx-dev-runtime": {
+      "src": "../../../../.yarn/cache/react-npm-18.3.1-af38f3c1ae-283e8c5efc.zip/node_modules/react/jsx-dev-runtime.js",
+      "file": "react_jsx-dev-runtime.js",
+      "fileHash": "7181ddf8",
+      "needsInterop": true
+    },
+    "react": {
+      "src": "../../../../.yarn/cache/react-npm-18.3.1-af38f3c1ae-283e8c5efc.zip/node_modules/react/index.js",
+      "file": "react.js",
+      "fileHash": "c401a092",
+      "needsInterop": true
+    },
+    "react-dom/client": {
+      "src": "../../../../.yarn/__virtual__/react-dom-virtual-52cc716650/0/cache/react-dom-npm-18.3.1-a805663f38-a752496c19.zip/node_modules/react-dom/client.js",
+      "file": "react-dom_client.js",
+      "fileHash": "75e1672e",
+      "needsInterop": true
+    },
+    "react/jsx-runtime": {
+      "src": "../../../../.yarn/cache/react-npm-18.3.1-af38f3c1ae-283e8c5efc.zip/node_modules/react/jsx-runtime.js",
+      "file": "react_jsx-runtime.js",
+      "fileHash": "40c8fe63",
+      "needsInterop": true
+    }
+  },
+  "chunks": {
+    "chunk-XZK5Q32F": {
+      "file": "chunk-XZK5Q32F.js"
+    }
+  }
+}
