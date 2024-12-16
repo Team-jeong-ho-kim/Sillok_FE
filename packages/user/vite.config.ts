@@ -7,6 +7,7 @@ export default defineConfig({
   plugins: [react()],
   cacheDir: "./.vite",
   resolve: {
+    
     alias: [
       { find: "@", replacement: path.resolve(__dirname, "src") },
     ],

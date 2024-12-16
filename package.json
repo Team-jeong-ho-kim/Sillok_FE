@@ -7,10 +7,9 @@
   ],
   "scripts": {
     "user": "yarn workspace user",
-    "ui": "yarn workspace ui",
     "admin": "yarn workspace admin"
   },
   "devDependencies": {
-    "typescript": "5.4.5"
+    "typescript": "5.5.4"
   }
 }
