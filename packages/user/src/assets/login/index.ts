@@ -1,0 +1,1 @@
+export { default as CancleIcon } from "./cancleIcon.svg";
