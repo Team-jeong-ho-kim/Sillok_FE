@@ -1,21 +1,20 @@
 import styled from "@emotion/styled";
-import { Link, Outlet, useNavigate } from "react-router-dom";
-import { useRef, useState } from "react";
-import { PostButtonIcon, BellIcon, ProfileIcon, ArrowIcon, Logo } from "@/assets/header";
-import { toast } from "react-toastify";
+import { Link, Outlet } from "react-router-dom";
+import { useState } from "react";
+import { Logo } from "@/assets/header";
 
 export const Header = () => {
-  const detailsRef = useRef<HTMLDetailsElement>(null);
+  // const detailsRef = useRef<HTMLDetailsElement>(null);
   const [, setVisibility] = useState<boolean>(false);
-  const [selected, setSelected] = useState("");
-  const navigate = useNavigate();
-  const handleSelect = (option: string) => {
-    navigate(option)
-    setSelected(option);
-    if (detailsRef.current) {
-      detailsRef.current.open = false; // details 요소 닫기
-    }
-  };
+  // const [, setSelected] = useState("");
+  // const navigate = useNavigate();
+  // const handleSelect = (option: string) => {
+  //   navigate(option)
+  //   setSelected(option);
+  //   if (detailsRef.current) {
+  //     detailsRef.current.open = false; // details 요소 닫기
+  //   }
+  // };
 
   return (
     <>
@@ -113,75 +112,75 @@ const UnderHeader = styled.div`
   }
 `;
 
-const PostButton = styled.div`
-  display: flex;
-  width: 160px;
-  height: 40px;
-  padding: 6px 18px 5px 15px;
-  justify-content: center;
-  align-items: center;
-  gap: 6px;
-  border-radius: 20px;
-  border: 1.5px solid #969393;
-`;
+// const PostButton = styled.div`
+//   display: flex;
+//   width: 160px;
+//   height: 40px;
+//   padding: 6px 18px 5px 15px;
+//   justify-content: center;
+//   align-items: center;
+//   gap: 6px;
+//   border-radius: 20px;
+//   border: 1.5px solid #969393;
+// `;
 
-const ProfileDetails = styled.details`
-  position: relative;
-  display: inline-block;
-  cursor: pointer;
+// const ProfileDetails = styled.details`
+//   position: relative;
+//   display: inline-block;
+//   cursor: pointer;
 
-  ul {
-    position: absolute;
-    top: calc(100% + 20px); /* summary 아래에 8px 간격 */
-    left: 50%; /* 부모(summary) 기준 가로 중앙 정렬 */
-    transform: translateX(-50%);
-    display: flex;
-    width: 110px;
-    padding: 10px;
-    flex-direction: column;
-    gap: 10px;
-    flex-shrink: 0;
-    z-index: 1000; /* 드롭다운이 다른 요소 위에 표시되도록 */
-    border-radius: 6px;
-    border: 1px solid #E3E3E3;
-    background: #FFF;
+//   ul {
+//     position: absolute;
+//     top: calc(100% + 20px); /* summary 아래에 8px 간격 */
+//     left: 50%; /* 부모(summary) 기준 가로 중앙 정렬 */
+//     transform: translateX(-50%);
+//     display: flex;
+//     width: 110px;
+//     padding: 10px;
+//     flex-direction: column;
+//     gap: 10px;
+//     flex-shrink: 0;
+//     z-index: 1000; /* 드롭다운이 다른 요소 위에 표시되도록 */
+//     border-radius: 6px;
+//     border: 1px solid #E3E3E3;
+//     background: #FFF;
 
-    & > li {
-      padding: 4px;
-      color: var(--Gray-70, #645E5E);
-      font-family: Roboto;
-      font-size: 14px;
-      font-style: normal;
-      font-weight: 500;
-      line-height: normal;
-    }
+//     & > li {
+//       padding: 4px;
+//       color: var(--Gray-70, #645E5E);
+//       font-family: Roboto;
+//       font-size: 14px;
+//       font-style: normal;
+//       font-weight: 500;
+//       line-height: normal;
+//     }
 
-    & > li:hover {
-      border-radius: 2px;
-      background: #F6F6F6;
-    }
-  }
+//     & > li:hover {
+//       border-radius: 2px;
+//       background: #F6F6F6;
+//     }
+//   }
 
-  summary {
-    list-style: none; /* 기본 화살표 제거 */
-    cursor: pointer;
-    position: relative;
-    & img {
-      content: "";
-      position: absolute;
-      top: -0.4em;
-      transition: 0.25s transform;
-    }
-  }
+//   summary {
+//     list-style: none; /* 기본 화살표 제거 */
+//     cursor: pointer;
+//     position: relative;
+//     & img {
+//       content: "";
+//       position: absolute;
+//       top: -0.4em;
+//       transition: 0.25s transform;
+//     }
+//   }
   
-  &[open] img {
-  transform: rotate(180deg); /* 화살표 아래로 회전 */
-  }
-`;
+//   &[open] img {
+//   transform: rotate(180deg); /* 화살표 아래로 회전 */
+//   }
+// `;
 
-const ProfileDiv = styled.div`
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  gap: 7px;
-`;
+// const ProfileDiv = styled.div`
+//   display: inline-flex;
+//   justify-content: center;
+//   align-items: center;
+//   gap: 7px;
+// `;

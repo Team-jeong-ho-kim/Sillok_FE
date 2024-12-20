@@ -1,6 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import { Header } from "@/components";
-import { Feed, Home, NotFound } from "@/pages";
+import { Home, NotFound } from "@/pages";
 
 export const router = createBrowserRouter([
   {
@@ -10,20 +10,7 @@ export const router = createBrowserRouter([
       {
         path: '/feed',
         element: <Home />
-      },
-
-      // {
-      //   path: 'feed',
-      //   element: <Feed />
-      // },
-      // {
-      //   path: 'feed/recent',
-      //   element: <Feed />
-      // },
-      // {
-      //   path: 'save',
-      //   element: <Feed />
-      // },
+      }
     ],
     errorElement: <NotFound />,
   },

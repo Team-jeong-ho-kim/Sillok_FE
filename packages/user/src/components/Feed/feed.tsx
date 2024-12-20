@@ -3,11 +3,11 @@ import { ProfileIcon } from "@/assets/header";
 import styled from "@emotion/styled";
 
 type IProp = {
-  userName: string;
-  createdAt: string;
-  title: string;
-  content: string;
-  heart: number;
+  title: string,
+  content: string,
+  userName: string,
+  createdAt: string,
+  heart: number,
 }
 
 export const FeedCard = ({ userName, createdAt, title, content, heart }: IProp) => {
@@ -126,6 +126,10 @@ const _TextWrapper = styled.div`
   flex-direction: column;
   gap: 5px;
   > :first-child {
+    width: 70%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     align-self: stretch;
     color: #000;
     font-family: Pretendard;
@@ -135,6 +139,10 @@ const _TextWrapper = styled.div`
     line-height: normal;
   }
   > :last-child {
+    width: 80%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 1;

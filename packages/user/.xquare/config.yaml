@@ -1,0 +1,7 @@
+config:
+  name: Sillok
+  service_type: fe
+  port: 3000
+  domain:
+    prod: sillok.xquare.app
+    stag: sillok-stag.xquare.app
