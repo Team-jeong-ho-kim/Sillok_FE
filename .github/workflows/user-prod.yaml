@@ -1,0 +1,29 @@
+on:
+  push:
+    branches:
+      - dev
+    paths:
+      - 'packages/user/**'
+
+jobs:
+  build:
+    permissions:
+      id-token: write
+      contents: read
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Out The Repository
+        uses: actions/checkout@v3
+
+      - name: Deploy to xquare
+        uses: team-xquare/xquare-deployment-action@master
+        with:
+          environment: prod
+          access_key: ${{ secrets.ACCESS_KEY }}
+          base_url: packages/user
+          config_file_path: packages/user/.xquare/config.yaml
+          buildargs: |
+            BRANCH=dev
+            VITE_MAIN_URL=${{ secrets.PROD_VITE_MAIN_URL }}
+            VITE_SERVER_URL=${{ secrets.PROD_VITE_SERVER_URL }}
