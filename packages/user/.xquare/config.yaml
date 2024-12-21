@@ -1,5 +1,5 @@
 config:
-  name: Sillok
+  name: sillok-fe
   service_type: fe
   port: 3000
   domain:
