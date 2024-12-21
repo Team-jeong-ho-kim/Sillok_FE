@@ -3,7 +3,6 @@ import { FeedCard } from "./feed";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { openDB } from "@/hooks/openDB";
-import { Feed } from "@/pages";
 
 interface Feed {
   id?: number;
@@ -18,6 +17,56 @@ export const MainFeed = () => {
   const dbName = "FeedDB";
   const storeName = "Feeds";
   const [feeds, setFeeds] = useState<Feed[]>([]);
+  const [, setError] = useState<string | null>();
+
+  useEffect(() => {
+    const fetchFeedsFromIndexedDB = async () => {
+      const indexedDBFeeds = await getAllFromIndexedDB();
+      setFeeds(indexedDBFeeds); // IndexedDB의 데이터를 초기 상태로 설정
+    };
+
+    fetchFeedsFromIndexedDB(); // 컴포넌트 마운트 시 IndexedDB 데이터 조회
+  }, []);
+
+  useEffect(() => {
+    const eventSource = new EventSource("http://sillok-stag-server.xquare.app/v1/sse/subscribe");
+
+    eventSource.onopen = () => {
+      console.log("SSE 연결 성공");
+      toast.success("SSE 연결 성공");
+      setError(null);
+    };
+
+    eventSource.addEventListener("Sillok event", async (event: MessageEvent) => {
+      try {
+        const feedData: Feed = JSON.parse(event.data);
+
+        // SSE에서 받은 데이터를 IndexedDB에 저장
+        await saveFeedToIndexedDB(feedData);
+
+        // IndexedDB에서 데이터를 다시 조회해서 상태 업데이트
+        const updatedFeeds = await getAllFromIndexedDB();
+        setFeeds(updatedFeeds);
+
+        toast.success("새로운 피드 수신");
+      } catch (err) {
+        console.error("피드 데이터 처리 에러:", err);
+        toast.error("피드 데이터 처리 실패");
+        setError("피드 데이터를 처리하는 중 오류 발생");
+      }
+    });
+
+    eventSource.onerror = (err) => {
+      console.error("SSE 연결 오류:", err);
+      toast.error("SSE 연결 실패");
+      setError("실시간 알림 연결에 문제가 발생했습니다.");
+      eventSource.close();
+    };
+
+    return () => {
+      eventSource.close();
+    };
+  }, []);
 
   // IndexedDB에 데이터 저장
   const saveFeedToIndexedDB = async (feed: Feed) => {
@@ -47,15 +96,15 @@ export const MainFeed = () => {
       const store = transaction.objectStore(storeName);
 
       return new Promise((resolve, reject) => {
-        const request = store.getAll(); // IndexedDB 요청
+        const request = store.getAll();
 
         request.onsuccess = () => {
-          resolve(request.result as Feed[]); // 요청 성공 시 결과 반환
+          resolve(request.result as Feed[]);
         };
 
         request.onerror = (e) => {
           console.error("IndexedDB 조회 오류:", e);
-          reject(e); // 오류 시 Promise 거부
+          reject(e);
         };
       });
     } catch (err) {
@@ -63,51 +112,6 @@ export const MainFeed = () => {
       return [];
     }
   };
-
-  // 서버에서 데이터 수신
-  const fetchFeedsFromServer = async () => {
-    try {
-      // 서버에서 피드 데이터를 가져온다고 가정
-      const serverFeeds: Feed[] = [
-        {
-          id: 1,
-          title: "New Feed",
-          content: "This is a new feed",
-          userName: "User1",
-          createdAt: new Date().toISOString(),
-          heart: 0,
-        },
-      ];
-
-      // IndexedDB에 저장
-      for (const feed of serverFeeds) {
-        await saveFeedToIndexedDB(feed);
-      }
-
-      toast.success("서버에서 데이터를 받아왔습니다.");
-    } catch (err) {
-      console.error("서버 데이터 가져오기 실패:", err);
-      toast.error("서버에서 데이터를 가져오는 중 문제가 발생했습니다.");
-    }
-  };
-
-  // 컴포넌트 마운트 시 IndexedDB와 서버 데이터 동기화
-  useEffect(() => {
-    const fetchFeeds = async () => {
-      // IndexedDB에서 데이터 가져오기
-      const indexedDBFeeds = await getAllFromIndexedDB();
-      setFeeds(indexedDBFeeds);
-
-      // 서버에서 데이터 가져오기
-      await fetchFeedsFromServer();
-
-      // IndexedDB에서 업데이트된 데이터 가져오기
-      const updatedFeeds = await getAllFromIndexedDB();
-      setFeeds(updatedFeeds);
-    };
-
-    fetchFeeds();
-  }, []);
 
   return (
     <_FeedWrapper>
