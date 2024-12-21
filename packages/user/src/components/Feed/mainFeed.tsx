@@ -29,7 +29,7 @@ export const MainFeed = () => {
   }, []);
 
   useEffect(() => {
-    const eventSource = new EventSource("http://sillok-stag-server.xquare.app/v1/sse/subscribe");
+    const eventSource = new EventSource("https://${PROD_VITE_SERVER_URL}/v1/sse/subscribe");
 
     eventSource.onopen = () => {
       console.log("SSE 연결 성공");
