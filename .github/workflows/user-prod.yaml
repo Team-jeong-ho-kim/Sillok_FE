@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - dev
+      - main
     paths:
       - 'packages/user/**'
 
@@ -24,6 +24,6 @@ jobs:
           base_url: packages/user
           config_file_path: packages/user/.xquare/config.yaml
           buildargs: |
-            BRANCH=dev
+            BRANCH=main
             VITE_MAIN_URL=${{ secrets.PROD_VITE_MAIN_URL }}
             VITE_SERVER_URL=${{ secrets.PROD_VITE_SERVER_URL }}
