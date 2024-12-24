@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import { instance } from "../axios";
 import { FeedResponse } from "./type";
 import axios from "axios";
 
