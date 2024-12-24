@@ -8,6 +8,7 @@ interface Feed {
   id?: number;
   title: string;
   content: string;
+  file: string;
   userName: string;
   createdAt: string;
 }
@@ -84,6 +85,7 @@ export const MainFeed = () => {
         <FeedCard
           key={feed.createdAt}
           userName={feed.userName}
+          file={feed.file}
           createdAt={feed.createdAt}
           title={feed.title}
           content={feed.content}

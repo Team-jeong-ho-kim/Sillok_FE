@@ -1,15 +1,16 @@
-import { ActivateHeart, TestImg } from "@/assets/feed";
+import { ActivateHeart } from "@/assets/feed";
 import { ProfileIcon } from "@/assets/header";
 import styled from "@emotion/styled";
 
 type IProp = {
   title: string,
   content: string,
+  file: string,
   userName: string,
   createdAt: string,
 }
 
-export const FeedCard = ({ userName, createdAt, title, content }: IProp) => {
+export const FeedCard = ({ userName, createdAt, file, title, content }: IProp) => {
   return (
     <_CardWrapper>
       <_UpperWrapper>
@@ -25,7 +26,7 @@ export const FeedCard = ({ userName, createdAt, title, content }: IProp) => {
         </div>
         <span>{createdAt}</span>
       </_UpperWrapper>
-      <ImgDiv imageUrl={TestImg} />
+      <ImgDiv imageUrl={file} />
       <_TextWrapper>
         <p>{title}</p>
         <p>{content}</p>
