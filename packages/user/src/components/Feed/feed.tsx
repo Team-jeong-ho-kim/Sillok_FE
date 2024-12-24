@@ -7,10 +7,9 @@ type IProp = {
   content: string,
   userName: string,
   createdAt: string,
-  heart: number,
 }
 
-export const FeedCard = ({ userName, createdAt, title, content, heart }: IProp) => {
+export const FeedCard = ({ userName, createdAt, title, content }: IProp) => {
   return (
     <_CardWrapper>
       <_UpperWrapper>
@@ -36,9 +35,6 @@ export const FeedCard = ({ userName, createdAt, title, content, heart }: IProp) 
           src={ActivateHeart}
           alt=""
         />
-        <span>
-          {heart}
-        </span>
       </div>
     </_CardWrapper>
   );

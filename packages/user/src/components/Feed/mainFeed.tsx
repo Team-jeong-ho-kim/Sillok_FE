@@ -1,8 +1,8 @@
 import styled from "@emotion/styled";
 import { FeedCard } from "./feed";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
 import { openDB } from "@/hooks/openDB";
+import { useGetFeed } from "@/apis";
 
 interface Feed {
   id?: number;
@@ -10,79 +10,44 @@ interface Feed {
   content: string;
   userName: string;
   createdAt: string;
-  heart: number;
 }
 
 export const MainFeed = () => {
   const dbName = "FeedDB";
   const storeName = "Feeds";
   const [feeds, setFeeds] = useState<Feed[]>([]);
-  const [, setError] = useState<string | null>();
+  const { data } = useGetFeed();
 
   useEffect(() => {
+    if (data && Array.isArray(data)) {
+      saveFeedToIndexedDB(data);
+    }
+
     const fetchFeedsFromIndexedDB = async () => {
       const indexedDBFeeds = await getAllFromIndexedDB();
       setFeeds(indexedDBFeeds); // IndexedDB의 데이터를 초기 상태로 설정
     };
 
     fetchFeedsFromIndexedDB(); // 컴포넌트 마운트 시 IndexedDB 데이터 조회
-  }, []);
-
-  useEffect(() => {
-    const eventSource = new EventSource(`https://${import.meta.env.VITE_PROD_SERVER_URL}/v1/sse/subscribe`);
-
-    eventSource.onopen = () => {
-      console.log("SSE 연결 성공");
-      toast.success("SSE 연결 성공");
-      setError(null);
-    };
-
-    eventSource.addEventListener("Sillok event", async (event: MessageEvent) => {
-      try {
-        const feedData: Feed = JSON.parse(event.data);
-
-        // SSE에서 받은 데이터를 IndexedDB에 저장
-        await saveFeedToIndexedDB(feedData);
-
-        // IndexedDB에서 데이터를 다시 조회해서 상태 업데이트
-        const updatedFeeds = await getAllFromIndexedDB();
-        setFeeds(updatedFeeds);
-
-        toast.success("새로운 피드 수신");
-      } catch (err) {
-        console.error("피드 데이터 처리 에러:", err);
-        toast.error("피드 데이터 처리 실패");
-        setError("피드 데이터를 처리하는 중 오류 발생");
-      }
-    });
-
-    eventSource.onerror = (err) => {
-      console.error("SSE 연결 오류:", err);
-      toast.error("SSE 연결 실패");
-      setError("실시간 알림 연결에 문제가 발생했습니다.");
-      eventSource.close();
-    };
-
-    return () => {
-      eventSource.close();
-    };
-  }, []);
+  }, [data]);
 
   // IndexedDB에 데이터 저장
-  const saveFeedToIndexedDB = async (feed: Feed) => {
+  const saveFeedToIndexedDB = async (feeds: Feed[]) => {
     try {
       const db = await openDB(dbName, storeName);
       const transaction = db.transaction(storeName, "readwrite");
       const store = transaction.objectStore(storeName);
 
-      const request = store.add(feed);
-      request.onsuccess = () => {
-        console.log("IndexedDB에 저장 성공:", feed);
-      };
+      feeds.forEach((feed) => {
+        const request = store.add(feed);
+        request.onsuccess = () => {
+          console.log("IndexedDB에 저장 성공:", feed);
+        };
 
-      request.onerror = (e: any) => {
-        console.error("IndexedDB 저장 오류:", e);
-      };
+        request.onerror = (e: any) => {
+          console.error("IndexedDB 저장 오류:", e);
+        };
+      });
     } catch (err) {
       console.error("IndexedDB 연결 실패:", err);
     }
@@ -122,7 +87,6 @@ export const MainFeed = () => {
           createdAt={feed.createdAt}
           title={feed.title}
           content={feed.content}
-          heart={feed.heart}
         />
       ))}
     </_FeedWrapper>
