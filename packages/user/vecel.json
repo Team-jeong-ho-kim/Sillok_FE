@@ -1,5 +1,5 @@
 {
-  "rewrites":  [
-    {"source": "/(.*)", "destination": "/"}
-  ]
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
+  "buildCommand": "cd ../.. && yarn workspace user build",
+  "outputDirectory": "packages/user/dist"
 }
