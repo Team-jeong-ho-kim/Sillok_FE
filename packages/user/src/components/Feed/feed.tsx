@@ -1,4 +1,3 @@
-import { ActivateHeart } from "@/assets/feed";
 import { ProfileIcon } from "@/assets/header";
 import styled from "@emotion/styled";
 

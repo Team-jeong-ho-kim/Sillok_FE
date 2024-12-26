@@ -10,7 +10,7 @@ export const FeedUploadPage = () => {
   const [file, setFile] = useState<File | null>(null); // 파일 상태
 
   // Form 상태
-  const [form, setForm] = useState({ value: "" });
+  const [, setForm] = useState({ value: "" });
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files ? e.target.files[0] : null;
