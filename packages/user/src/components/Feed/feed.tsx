@@ -31,13 +31,8 @@ export const FeedCard = ({ userName, createdAt, file, title, content }: IProp) =
         <p>{title}</p>
         <p>{content}</p>
       </_TextWrapper>
-      <div>
-        <img
-          src={ActivateHeart}
-          alt=""
-        />
-      </div>
-    </_CardWrapper>
+      <div></div>
+    </_CardWrapper >
   );
 }
 
@@ -122,8 +117,9 @@ const _TextWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 5px;
+  width: 100%;
   > :first-child {
-    width: 70%;
+    width: 80%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

@@ -5,7 +5,7 @@ import { openDB } from "@/hooks/openDB";
 import { useGetFeed } from "@/apis";
 
 interface Feed {
-  id?: number;
+  feedId?: number;
   title: string;
   content: string;
   file: string;
@@ -32,29 +32,35 @@ export const MainFeed = () => {
     fetchFeedsFromIndexedDB(); // 컴포넌트 마운트 시 IndexedDB 데이터 조회
   }, [data]);
 
-  // IndexedDB에 데이터 저장
+  // IndexedDB에 데이터 저장 (feedId를 id로 매핑)
   const saveFeedToIndexedDB = async (feeds: Feed[]) => {
     try {
       const db = await openDB(dbName, storeName);
       const transaction = db.transaction(storeName, "readwrite");
       const store = transaction.objectStore(storeName);
 
-      feeds.forEach((feed) => {
-        const request = store.add(feed);
-        request.onsuccess = () => {
-          console.log("IndexedDB에 저장 성공:", feed);
-        };
+      const existingFeeds: Feed[] = await getAllFromIndexedDB(); // 기존 데이터 조회
+      const existingIds = new Set(existingFeeds.map((feed) => feed.feedId)); // ID 집합 생성
 
-        request.onerror = (e: any) => {
-          console.error("IndexedDB 저장 오류:", e);
-        };
-      });
+      for (const feed of feeds) {
+        if (existingIds.has(feed.feedId)) {
+          console.log("중복된 데이터로 저장 건너뜀:", feed);
+          continue;
+        }
+
+        const transformedFeed = { ...feed, id: feed.feedId };
+        const request = store.add(transformedFeed);
+
+        request.onsuccess = () => console.log("IndexedDB에 저장 성공:", transformedFeed);
+        request.onerror = (e: any) => console.error("IndexedDB 저장 오류:", e);
+      }
     } catch (err) {
       console.error("IndexedDB 연결 실패:", err);
     }
   };
 
-  // IndexedDB에서 데이터 조회
+
+  // IndexedDB에서 모든 데이터 조회
   const getAllFromIndexedDB = async (): Promise<Feed[]> => {
     try {
       const db = await openDB(dbName, storeName);
@@ -83,7 +89,7 @@ export const MainFeed = () => {
     <_FeedWrapper>
       {feeds.map((feed) => (
         <FeedCard
-          key={feed.createdAt}
+          key={feed.feedId || feed.createdAt}
           userName={feed.userName}
           file={feed.file}
           createdAt={feed.createdAt}

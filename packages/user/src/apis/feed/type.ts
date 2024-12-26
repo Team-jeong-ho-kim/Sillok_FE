@@ -1,5 +1,5 @@
 export type FeedResponse = {
-  id?: number;
+  feedId?: number;
   title: string;
   content: string;
   file: string;

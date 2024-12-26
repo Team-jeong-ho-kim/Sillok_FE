@@ -1,6 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import { Header } from "@/components";
-import { Home, NotFound } from "@/pages";
+import { FeedUploadPage, Home, NotFound } from "@/pages";
 import { FeedDetailPage } from "./pages/FeedDetailPage";
 
 export const router = createBrowserRouter([
@@ -11,6 +11,10 @@ export const router = createBrowserRouter([
       {
         path: '/',
         element: <Home />
+      },
+      {
+        path: 'durls-dkansk-emfdjdhwlahtgo',
+        element: <FeedUploadPage />
       },
       {
         path: 'feed/:id',

@@ -1,5 +1,4 @@
 import styled from "@emotion/styled";
-import { marked } from "marked";
 
 interface IProp {
   title?: string;
@@ -19,9 +18,7 @@ export const FeedDetail = ({ title, content, createdAt, userName }: IProp) => {
         </_Meta>
       </_Header>
 
-      <_Content dangerouslySetInnerHTML={{
-        __html: content ? marked(content) : "",
-      }} />
+      <_Content>{content}</_Content>
     </_Wrapper >
   );
 };
