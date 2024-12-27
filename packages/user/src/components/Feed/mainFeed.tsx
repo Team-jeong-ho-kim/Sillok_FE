@@ -1,101 +1,74 @@
 import styled from "@emotion/styled";
 import { FeedCard } from "./feed";
 import { useEffect, useState } from "react";
-import { openDB } from "@/hooks/openDB";
-import { useGetFeed } from "@/apis";
+import { Link } from "react-router-dom";
+import { useIndexedDB } from "react-indexed-db-hook";
+import { useGetFeed } from "@/apis/feed";
 
-interface Feed {
-  feedId?: number;
+type IProp = {
+  feedId: number;
   title: string;
   content: string;
-  file: string;
   userName: string;
   createdAt: string;
-}
+  file: string;
+};
 
 export const MainFeed = () => {
-  const dbName = "FeedDB";
-  const storeName = "Feeds";
-  const [feeds, setFeeds] = useState<Feed[]>([]);
-  const { data } = useGetFeed();
+  const { getAll, add } = useIndexedDB("feed"); // IndexedDB 데이터 관리
+  const [feeds, setFeeds] = useState<IProp[]>([]); // 피드 데이터 상태
+  const { data: serverFeeds, isLoading: serverLoading, isError } = useGetFeed(); // 서버 데이터 가져오기
+  const [loading, setLoading] = useState<boolean>(true); // 로딩 상태
 
+  // IndexedDB에서 데이터 가져오기
   useEffect(() => {
-    if (data && Array.isArray(data)) {
-      saveFeedToIndexedDB(data);
-    }
-
-    const fetchFeedsFromIndexedDB = async () => {
-      const indexedDBFeeds = await getAllFromIndexedDB();
-      setFeeds(indexedDBFeeds); // IndexedDB의 데이터를 초기 상태로 설정
-    };
-
-    fetchFeedsFromIndexedDB(); // 컴포넌트 마운트 시 IndexedDB 데이터 조회
-  }, [data]);
-
-  // IndexedDB에 데이터 저장 (feedId를 id로 매핑)
-  const saveFeedToIndexedDB = async (feeds: Feed[]) => {
-    try {
-      const db = await openDB(dbName, storeName);
-      const transaction = db.transaction(storeName, "readwrite");
-      const store = transaction.objectStore(storeName);
-
-      const existingFeeds: Feed[] = await getAllFromIndexedDB(); // 기존 데이터 조회
-      const existingIds = new Set(existingFeeds.map((feed) => feed.feedId)); // ID 집합 생성
-
-      for (const feed of feeds) {
-        if (existingIds.has(feed.feedId)) {
-          console.log("중복된 데이터로 저장 건너뜀:", feed);
-          continue;
-        }
-
-        const transformedFeed = { ...feed, id: feed.feedId };
-        const request = store.add(transformedFeed);
-
-        request.onsuccess = () => console.log("IndexedDB에 저장 성공:", transformedFeed);
-        request.onerror = (e: any) => console.error("IndexedDB 저장 오류:", e);
-      }
-    } catch (err) {
-      console.error("IndexedDB 연결 실패:", err);
-    }
-  };
-
-
-  // IndexedDB에서 모든 데이터 조회
-  const getAllFromIndexedDB = async (): Promise<Feed[]> => {
-    try {
-      const db = await openDB(dbName, storeName);
-      const transaction = db.transaction(storeName, "readonly");
-      const store = transaction.objectStore(storeName);
-
-      return new Promise((resolve, reject) => {
-        const request = store.getAll();
-
-        request.onsuccess = () => {
-          resolve(request.result as Feed[]);
-        };
-
-        request.onerror = (e) => {
-          console.error("IndexedDB 조회 오류:", e);
-          reject(e);
-        };
+    setLoading(true);
+    getAll()
+      .then((localFeeds: IProp[]) => {
+        setFeeds(localFeeds); // IndexedDB 데이터 설정
+      })
+      .catch((error) => {
+        console.error("Error fetching local feeds:", error);
+      })
+      .finally(() => {
+        setLoading(false); // 로딩 종료
       });
-    } catch (err) {
-      console.error("IndexedDB 조회 중 예외 발생:", err);
-      return [];
+  }, [getAll]);
+
+  // 서버 데이터를 IndexedDB에 저장
+  useEffect(() => {
+    if (serverFeeds && serverFeeds.length > 0) {
+      serverFeeds.forEach((feed) => {
+        add(feed).catch((error) =>
+          console.error(`Error adding feed (ID: ${feed.feedId}) to IndexedDB:`, error)
+        );
+      });
+      setFeeds(serverFeeds as IProp[]); // 최신 데이터로 상태 업데이트
     }
-  };
+  }, [serverFeeds, add]);
+
+  if (loading || serverLoading) {
+    return <p>Loading...</p>; // 로딩 중일 때 표시
+  }
+
+  if (isError) {
+    return <p>Error loading feed data.</p>; // 에러 발생 시 표시
+  }
 
   return (
     <_FeedWrapper>
       {feeds.map((feed) => (
-        <FeedCard
-          key={feed.feedId || feed.createdAt}
-          userName={feed.userName}
-          file={feed.file}
-          createdAt={feed.createdAt}
-          title={feed.title}
-          content={feed.content}
-        />
+        <li key={feed.feedId}>
+          <Link to={`/feed/${feed.feedId}`}>
+            <FeedCard
+              userName={feed.userName}
+              file={feed.file}
+              createdAt={feed.createdAt}
+              title={feed.title}
+              content={feed.content}
+            />
+          </Link>
+        </li>
       ))}
     </_FeedWrapper>
   );
@@ -107,4 +80,7 @@ const _FeedWrapper = styled.ul`
   gap: 50px 36px;
   grid-template-columns: repeat(4, 1fr); /* 4개의 고정된 열 */
   grid-auto-rows: auto; /* 행의 높이는 컨텐츠 크기에 따라 조정 */
+  list-style: none;
+  padding: 0;
+  margin: 0;
 `;

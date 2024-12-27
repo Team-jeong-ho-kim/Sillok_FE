@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 
 interface IProp {
   title?: string;
-  content?: string;
+  content?: React.ReactNode;
   createdAt?: string;
   userName?: string;
 }
